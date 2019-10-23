@@ -1,0 +1,208 @@
+"""
+Created on Wed Oct 23 11:25:18 2019
+
+@author: civil
+"""
+
+
+import praw
+import pandas as pd
+import numpy as np
+from praw.models import MoreComments
+import matplotlib.pyplot as plt
+
+#You will need to fill in the client id, client secret, user agent, and reddit thread id (the one for the big askreddit thread is dko28q)
+#You can get these numbers by getting access to the reddit api, its really simple, the walkthrough here: https://towardsdatascience.com/scraping-reddit-data-1c0af3040768
+#goes through everything you need to get access. 
+
+reddit = praw.Reddit(client_id='your client id', client_secret='your client secret', user_agent='your user agent')
+
+submission = reddit.submission(id="the id from the reddit thread")
+submission.comments.replace_more(limit=None)
+
+posts = []
+
+for top_level_comment in submission.comments:
+    posts.append(top_level_comment.body)
+
+df = pd.Series(posts)
+
+length = len(df)
+print(length)
+
+##############
+debt = df.str.findall('debt').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+debt_count = len(debt)
+print('Number of times debt was mentioned: ',debt_count)
+
+
+
+##############
+loans = df.str.findall('loans').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+loans_count = len(loans)
+print('Number of times loans were mentioned: ',loans_count)
+
+
+
+##############
+groceries = df.str.findall('groceries').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+groceries_count = len(groceries)
+print('Number of times groceries were mentioned: ', groceries_count)
+
+
+
+##############
+car = df.str.findall('car').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+car_count = len(car)
+print('Number of times car was mentioned: ', car_count)
+
+
+
+
+##############
+health = df.str.findall('health').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+health_count = len(health)
+print('Number of times health was mentioned: ', health_count)
+
+
+
+
+##############
+food = df.str.findall('food').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+food_count = len(food)
+print('Number of times food was mentioned: ', food_count)
+
+
+
+
+##############
+rent = df.str.findall('rent').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+rent_count = len(rent)
+print('Number of times rent was mentioned: ', rent_count)
+
+
+
+
+##############
+saving = df.str.findall('saving').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+saving_count = len(saving)
+print('Number of times saving was mentioned: ', saving_count)
+
+
+
+
+##############
+stress = df.str.findall('stress').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+stress_count = len(stress)
+print('Number of times stress was mentioned: ', stress_count)
+
+
+
+
+##############
+bill = df.str.findall('bill').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+bill_count = len(bill)
+print('Number of times bill was mentioned: ', bill_count)
+
+
+
+
+##############
+retirement = df.str.findall('retirement').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+retirement_count = len(retirement)
+print('Number of times retirement was mentioned: ', retirement_count)
+
+
+
+
+##############
+move = df.str.findall('move').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+move_count = len(move)
+print('Number of times move was mentioned: ', move_count)
+
+
+
+
+##############
+drugs = df.str.findall('drugs').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+drugs_count = len(drugs)
+print('Number of times drugs was mentioned: ', drugs_count)
+
+
+
+
+##############
+future = df.str.findall('future').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+future_count = len(future)
+print('Number of times future was mentioned: ', future_count)
+
+
+
+
+
+##############
+beer = df.str.findall('beer').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+beer_count = len(beer)
+print('Number of times beer were mentioned: ',beer_count)
+
+
+
+
+
+##############
+alcohol = df.str.findall('alcohol').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+alcohol_count = len(alcohol)
+print('Number of times alcohol was mentioned: ',alcohol_count)
+
+
+
+
+##############
+marijuana = df.str.findall('marijuana').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+marijuana_count = len(marijuana)
+print('Number of times marijuana was mentioned: ',marijuana_count)
+
+
+
+
+##############
+child = df.str.findall('child').to_frame().applymap(str).replace('[]', np.nan).dropna()
+
+child_count = len(child)
+print('Number of times child was mentioned: ',child_count)
+
+
+##############
+totals = pd.DataFrame(data = np.array([debt_count,loans_count,groceries_count,car_count,health_count,food_count,rent_count,saving_count, stress_count,
+                                bill_count,retirement_count,move_count,drugs_count,future_count,beer_count,alcohol_count,marijuana_count,child_count]),
+                                index = ['Debt', 'Loans', 'groceries', 'car','health', 'food','rent','saving', 'stress',
+                                'bill','retirement','move','drugs','future','beer','alcohol','marijuana','child'])
+    
+sum_ = int(totals.sum())
+print(totals.sort_values(by = 0, ascending = False))
+average_ = (totals/sum_)*100
+
+print(average_.sort_values(by = 0, ascending = False))
+
+x_labels = ['Debt', 'Loans', 'groceries', 'car','health', 'food','rent','saving', 'stress','bill','retirement','move','drugs','future']
+
+plot = average_.plot.bar()
+
+plot
